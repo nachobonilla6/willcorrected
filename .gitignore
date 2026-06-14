@@ -14,10 +14,10 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
-/public/fonts-manifest.dev.json
-/public/hot
-/public/storage
+/public_html/build
+/public_html/fonts-manifest.dev.json
+/public_html/hot
+/public_html/storage
 /storage/*.key
 /storage/pail
 /vendor
@@ -25,10 +25,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
-/public/videos/*.mp4
+/public_html/videos/*.mp4
 
 # Uploaded media (keep repo light)
-/public/lp-photos/*
-/public/videos/*
-/public/storage/*
+/public_html/lp-photos/*
+/public_html/videos/*
+/public_html/storage/*
 /database/seed.sql

@@ -11,7 +11,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Use public_html/ instead of public/ (Hostinger compatibility)
+        $this->app->usePublicPath(base_path('public_html'));
     }
 
     /**
