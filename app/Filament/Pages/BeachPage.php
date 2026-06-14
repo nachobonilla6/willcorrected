@@ -13,6 +13,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Storage;
 
 class BeachPage extends Page implements HasForms
 {
@@ -32,15 +33,14 @@ class BeachPage extends Page implements HasForms
     public function mount(): void
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
-        $data = $content->toArray();
+        $this->form->fill($content->toArray());
+
         foreach (['beach_image_1', 'beach_image_2'] as $key) {
-            if (!empty($data[$key]) && is_string($data[$key])) {
+            if (!empty($content->$key)) {
                 $prop = $key === 'beach_image_1' ? 'beachPreviewUrl1' : 'beachPreviewUrl2';
-                $this->$prop = asset($data[$key]);
-                unset($data[$key]);
+                $this->$prop = asset($content->$key);
             }
         }
-        $this->form->fill($data);
     }
 
     public function form(Form $form): Form
@@ -116,19 +116,67 @@ class BeachPage extends Page implements HasForms
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
         $state = $this->form->getState();
+
         foreach (['beach_image_1', 'beach_image_2'] as $key) {
-            if (!empty($state[$key])) {
-                if (is_array($state[$key])) {
-                    $state[$key] = 'lp-photos/' . ($state[$key][0] ?? '');
-                } elseif (is_string($state[$key]) && !str_starts_with($state[$key], 'lp-photos/')) {
-                    $state[$key] = 'lp-photos/' . $state[$key];
-                }
+            if (empty($state[$key])) {
+                unset($state[$key]);
+            } elseif (is_array($state[$key])) {
+                $state[$key] = 'lp-photos/' . ($state[$key][0] ?? '');
+            } elseif (is_string($state[$key]) && !str_starts_with($state[$key], 'lp-photos/')) {
+                $state[$key] = 'lp-photos/' . $state[$key];
             }
         }
+
         $content->update($state);
+
+        // Refresh previews after save
+        $content->refresh();
+        foreach (['beach_image_1' => 'beachPreviewUrl1', 'beach_image_2' => 'beachPreviewUrl2'] as $src => $prop) {
+            if ($content->$src) {
+                $this->$prop = asset($content->$src);
+            } else {
+                $this->$prop = null;
+            }
+        }
+
+        $this->form->fill($content->toArray());
 
         Notification::make()
             ->title('Beach Section updated!')
+            ->success()
+            ->send();
+    }
+
+    public function deleteBeach1(): void
+    {
+        $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
+        if ($content->beach_image_1) {
+            Storage::disk('public_html')->delete($content->beach_image_1);
+        }
+        $content->update(['beach_image_1' => null]);
+        $this->beachPreviewUrl1 = null;
+        $this->form->fill($content->fresh()->toArray());
+        $this->dispatch('$refresh');
+
+        Notification::make()
+            ->title('Beach Photo 1 removed')
+            ->success()
+            ->send();
+    }
+
+    public function deleteBeach2(): void
+    {
+        $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
+        if ($content->beach_image_2) {
+            Storage::disk('public_html')->delete($content->beach_image_2);
+        }
+        $content->update(['beach_image_2' => null]);
+        $this->beachPreviewUrl2 = null;
+        $this->form->fill($content->fresh()->toArray());
+        $this->dispatch('$refresh');
+
+        Notification::make()
+            ->title('Beach Photo 2 removed')
             ->success()
             ->send();
     }

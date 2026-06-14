@@ -16,14 +16,30 @@
     @endif
 
     @if(property_exists($this, 'beachPreviewUrl1') && $this->beachPreviewUrl1)
-    <div class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg relative">
+        <button type="button"
+                wire:click="deleteBeach1"
+                wire:confirm="Remove Beach Photo 1?"
+                class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                       rounded-full bg-red-500/70 text-white text-sm font-bold
+                       hover:bg-red-600 transition-colors shadow-sm">
+            ✕
+        </button>
         <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Beach Photo 1</p>
         <img src="{{ $this->beachPreviewUrl1 }}" class="rounded-lg shadow-md max-h-64 w-auto" alt="Beach photo 1" />
     </div>
     @endif
 
     @if(property_exists($this, 'beachPreviewUrl2') && $this->beachPreviewUrl2)
-    <div class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg relative">
+        <button type="button"
+                wire:click="deleteBeach2"
+                wire:confirm="Remove Beach Photo 2?"
+                class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                       rounded-full bg-red-500/70 text-white text-sm font-bold
+                       hover:bg-red-600 transition-colors shadow-sm">
+            ✕
+        </button>
         <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Beach Photo 2</p>
         <img src="{{ $this->beachPreviewUrl2 }}" class="rounded-lg shadow-md max-h-64 w-auto" alt="Beach photo 2" />
     </div>
@@ -38,13 +54,13 @@
             <button type="button"
                     wire:click="deleteVideo1"
                     wire:confirm="Remove Video 1?"
-                    class="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center
-                           rounded-full bg-red-500/70 text-white text-xs font-bold
+                    class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                           rounded-full bg-red-500/70 text-white text-sm font-bold
                            hover:bg-red-600 transition-colors shadow-sm">
                 ✕
             </button>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Video 1</p>
-            <video controls class="rounded-lg shadow-md max-h-64 w-full">
+            <video controls class="rounded-lg shadow-md max-h-48 w-full">
                 <source src="{{ $this->videoPreviewUrl1 }}" type="video/mp4" />
             </video>
         </div>
@@ -54,13 +70,13 @@
             <button type="button"
                     wire:click="deleteVideo2"
                     wire:confirm="Remove Video 2?"
-                    class="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center
-                           rounded-full bg-red-500/70 text-white text-xs font-bold
+                    class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                           rounded-full bg-red-500/70 text-white text-sm font-bold
                            hover:bg-red-600 transition-colors shadow-sm">
                 ✕
             </button>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Video 2</p>
-            <video controls class="rounded-lg shadow-md max-h-64 w-full">
+            <video controls class="rounded-lg shadow-md max-h-48 w-full">
                 <source src="{{ $this->videoPreviewUrl2 }}" type="video/mp4" />
             </video>
         </div>

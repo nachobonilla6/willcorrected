@@ -12,6 +12,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Storage;
 
 class VideoPage extends Page implements HasForms
 {
@@ -21,7 +22,7 @@ class VideoPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Video';
     protected static ?string $slug = 'video';
     protected static ?string $title = 'Video Tour';
-    protected static string $view = 'filament.pages.hero';
+    protected static string $view = 'filament.pages.video';
     protected static ?int $navigationSort = 5;
 
     public ?array $data = [];
@@ -31,15 +32,14 @@ class VideoPage extends Page implements HasForms
     public function mount(): void
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
-        $data = $content->toArray();
+        $this->form->fill($content->toArray());
+
         foreach (['video_1_src', 'video_2_src'] as $key) {
-            if (!empty($data[$key]) && is_string($data[$key])) {
+            if (!empty($content->$key)) {
                 $prop = $key === 'video_1_src' ? 'videoPreviewUrl1' : 'videoPreviewUrl2';
-                $this->$prop = asset($data[$key]);
-                unset($data[$key]);
+                $this->$prop = asset($content->$key);
             }
         }
-        $this->form->fill($data);
     }
 
     public function form(Form $form): Form
@@ -56,6 +56,7 @@ class VideoPage extends Page implements HasForms
                                     ->directory('videos')
                                     ->acceptedFileTypes(['video/mp4', 'video/ogg', 'video/webm'])
                                     ->maxSize(102400)
+                                    ->imagePreviewHeight('120')
                                     ->previewable(true)
                                     ->openable()
                                     ->downloadable(),
@@ -71,6 +72,7 @@ class VideoPage extends Page implements HasForms
                                     ->directory('videos')
                                     ->acceptedFileTypes(['video/mp4', 'video/ogg', 'video/webm'])
                                     ->maxSize(102400)
+                                    ->imagePreviewHeight('120')
                                     ->previewable(true)
                                     ->openable()
                                     ->downloadable(),
@@ -88,15 +90,18 @@ class VideoPage extends Page implements HasForms
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
         $state = $this->form->getState();
+
+        // Preserve existing video paths if no new file uploaded
         foreach (['video_1_src', 'video_2_src'] as $key) {
-            if (!empty($state[$key])) {
-                if (is_array($state[$key])) {
-                    $state[$key] = 'videos/' . ($state[$key][0] ?? '');
-                } elseif (is_string($state[$key]) && !str_starts_with($state[$key], 'videos/')) {
-                    $state[$key] = 'videos/' . $state[$key];
-                }
+            if (empty($state[$key])) {
+                unset($state[$key]);
+            } elseif (is_array($state[$key])) {
+                $state[$key] = 'videos/' . ($state[$key][0] ?? '');
+            } elseif (is_string($state[$key]) && !str_starts_with($state[$key], 'videos/')) {
+                $state[$key] = 'videos/' . $state[$key];
             }
         }
+
         $content->update($state);
 
         // Refresh previews after save
@@ -109,6 +114,8 @@ class VideoPage extends Page implements HasForms
             }
         }
 
+        $this->form->fill($content->toArray());
+
         Notification::make()
             ->title('Video Tour updated!')
             ->success()
@@ -118,11 +125,12 @@ class VideoPage extends Page implements HasForms
     public function deleteVideo1(): void
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
+        if ($content->video_1_src) {
+            Storage::disk('public_html')->delete($content->video_1_src);
+        }
         $content->update(['video_1_src' => null, 'video_1_label' => null]);
         $this->videoPreviewUrl1 = null;
-        $data = $content->fresh()->toArray();
-        unset($data['video_1_src']);
-        $this->form->fill($data);
+        $this->form->fill($content->fresh()->toArray());
         $this->dispatch('$refresh');
 
         Notification::make()
@@ -134,11 +142,12 @@ class VideoPage extends Page implements HasForms
     public function deleteVideo2(): void
     {
         $content = PropertyContent::firstOrCreate([], ['is_active' => true]);
+        if ($content->video_2_src) {
+            Storage::disk('public_html')->delete($content->video_2_src);
+        }
         $content->update(['video_2_src' => null, 'video_2_label' => null]);
         $this->videoPreviewUrl2 = null;
-        $data = $content->fresh()->toArray();
-        unset($data['video_2_src']);
-        $this->form->fill($data);
+        $this->form->fill($content->fresh()->toArray());
         $this->dispatch('$refresh');
 
         Notification::make()

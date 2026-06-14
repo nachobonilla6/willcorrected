@@ -1,0 +1,48 @@
+<x-filament::page>
+    {{ $this->form }}
+
+    @php $hasVideo1 = property_exists($this, 'videoPreviewUrl1') && $this->videoPreviewUrl1; @endphp
+    @php $hasVideo2 = property_exists($this, 'videoPreviewUrl2') && $this->videoPreviewUrl2; @endphp
+    @if($hasVideo1 || $hasVideo2)
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        @if($hasVideo1)
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg relative">
+            <button type="button"
+                    wire:click="deleteVideo1"
+                    wire:confirm="Remove Video 1?"
+                    class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                           rounded-full bg-red-500/70 text-white text-sm font-bold
+                           hover:bg-red-600 transition-colors shadow-sm">
+                ✕
+            </button>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Video 1</p>
+            <video controls class="rounded-lg shadow-md max-h-48 w-full">
+                <source src="{{ $this->videoPreviewUrl1 }}" type="video/mp4" />
+            </video>
+        </div>
+        @endif
+        @if($hasVideo2)
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg relative">
+            <button type="button"
+                    wire:click="deleteVideo2"
+                    wire:confirm="Remove Video 2?"
+                    class="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center
+                           rounded-full bg-red-500/70 text-white text-sm font-bold
+                           hover:bg-red-600 transition-colors shadow-sm">
+                ✕
+            </button>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Video 2</p>
+            <video controls class="rounded-lg shadow-md max-h-48 w-full">
+                <source src="{{ $this->videoPreviewUrl2 }}" type="video/mp4" />
+            </video>
+        </div>
+        @endif
+    </div>
+    @endif
+
+    <div class="flex justify-end mt-6">
+        <x-filament::button wire:click="save" color="primary">
+            Save
+        </x-filament::button>
+    </div>
+</x-filament::page>
