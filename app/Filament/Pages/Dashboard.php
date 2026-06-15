@@ -9,7 +9,7 @@ class Dashboard extends BaseDashboard
     protected static ?string $navigationLabel = 'Dashboard';
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    protected function getColumns(): int|array
+    public function getColumns(): int|array
     {
         return [
             'md' => 4,
