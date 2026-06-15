@@ -2,90 +2,32 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Amenity;
 use Filament\Widgets\ChartWidget;
-use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
-use Google\Analytics\Data\V1beta\DateRange;
-use Google\Analytics\Data\V1beta\Metric;
-use Google\Analytics\Data\V1beta\Dimension;
-use Google\Analytics\Data\V1beta\OrderBy;
-use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
 
 class AmenityBarChart extends ChartWidget
 {
-    protected static ?string $heading = 'Top Pages (30 days)';
+    protected static ?string $heading = 'Amenities Status';
 
-    protected static ?string $pollingInterval = '10m';
+    protected static ?string $pollingInterval = null;
 
     protected function getData(): array
     {
-        try {
-            $client = new BetaAnalyticsDataClient([
-                'credentials' => storage_path('app/analytics/clave2.json'),
-            ]);
+        $active = Amenity::where('is_active', true)->count();
+        $inactive = Amenity::where('is_active', false)->count();
 
-            $propertyId = '541566267';
-
-            $response = $client->runReport([
-                'property' => "properties/{$propertyId}",
-                'dateRanges' => [
-                    new DateRange(['start_date' => '30daysAgo', 'end_date' => 'today']),
+        return [
+            'datasets' => [
+                [
+                    'label' => 'Amenities',
+                    'data' => [$active, $inactive],
+                    'backgroundColor' => ['#10b981', '#ef4444'],
+                    'borderColor' => ['#059669', '#dc2626'],
+                    'barThickness' => 32,
                 ],
-                'dimensions' => [
-                    new Dimension(['name' => 'pagePath']),
-                ],
-                'metrics' => [
-                    new Metric(['name' => 'screenPageViews']),
-                ],
-                'limit' => 5,
-                'orderBys' => [
-                    new OrderBy([
-                        'metric' => new MetricOrderBy([
-                            'metric_name' => 'screenPageViews',
-                        ]),
-                        'desc' => true,
-                    ]),
-                ],
-            ]);
-
-            $labels = [];
-            $data = [];
-
-            foreach ($response->getRows() as $row) {
-                $path = $row->getDimensionValues()[0]->getValue();
-                $labels[] = mb_strlen($path) > 25 ? '...' . mb_substr($path, -22) : $path;
-                $data[] = (int) $row->getMetricValues()[0]->getValue();
-            }
-
-            if (empty($labels)) {
-                $labels = ['No data yet'];
-                $data = [0];
-            }
-
-            return [
-                'datasets' => [
-                    [
-                        'label' => 'Page Views',
-                        'data' => $data,
-                        'backgroundColor' => '#f59e0b',
-                        'borderColor' => '#d97706',
-                        'barThickness' => 32,
-                    ],
-                ],
-                'labels' => $labels,
-            ];
-        } catch (\Exception $e) {
-            return [
-                'datasets' => [
-                    [
-                        'label' => 'Error',
-                        'data' => [0],
-                        'backgroundColor' => '#ef4444',
-                        'barThickness' => 32,
-                    ],
-                ],
-                'labels' => ['API Error'],
-            ];
-        }
+            ],
+            'labels' => ['Active', 'Inactive'],
+        ];
     }
 
     protected function getType(): string
