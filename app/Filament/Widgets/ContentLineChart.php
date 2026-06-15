@@ -3,10 +3,13 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
-use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
+use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Metric;
 use Google\Analytics\Data\V1beta\Dimension;
+use Google\Analytics\Data\V1beta\OrderBy;
+use Google\Analytics\Data\V1beta\OrderBy\DimensionOrderBy;
+use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
 
 class ContentLineChart extends ChartWidget
 {
@@ -35,8 +38,8 @@ class ContentLineChart extends ChartWidget
                     new Metric(['name' => 'activeUsers']),
                 ],
                 'orderBys' => [
-                    new \Google\Analytics\Data\V1beta\OrderBy([
-                        'dimension' => new \Google\Analytics\Data\V1beta\OrderBy\DimensionOrderBy([
+                    new OrderBy([
+                        'dimension' => new DimensionOrderBy([
                             'dimension_name' => 'date',
                         ]),
                     ]),

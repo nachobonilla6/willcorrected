@@ -3,10 +3,12 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
-use Google\Analytics\Data\V1beta\BetaAnalyticsDataClient;
+use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Metric;
 use Google\Analytics\Data\V1beta\Dimension;
+use Google\Analytics\Data\V1beta\OrderBy;
+use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
 
 class AmenityBarChart extends ChartWidget
 {
@@ -36,8 +38,8 @@ class AmenityBarChart extends ChartWidget
                 ],
                 'limit' => 5,
                 'orderBys' => [
-                    new \Google\Analytics\Data\V1beta\OrderBy([
-                        'metric' => new \Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy([
+                    new OrderBy([
+                        'metric' => new MetricOrderBy([
                             'metric_name' => 'screenPageViews',
                         ]),
                         'desc' => true,
