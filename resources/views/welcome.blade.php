@@ -11,12 +11,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1M9NSR63R8"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHZ58TL3F5"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-1M9NSR63R8');
+    gtag('config', 'G-SHZ58TL3F5');
   </script>
   <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 </head>
