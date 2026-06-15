@@ -16,10 +16,10 @@ class AnalyticsOverview extends BaseWidget
     {
         try {
             $client = new BetaAnalyticsDataClient([
-                'credentials' => storage_path('app/analytics/clave-will.json'),
+                'credentials' => storage_path('app/analytics/clave2.json'),
             ]);
 
-            $propertyId = '15074266725';
+            $propertyId = '541566267';
 
             $response = $client->runReport([
                 'property' => "properties/{$propertyId}",
