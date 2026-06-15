@@ -39,7 +39,7 @@ class ContentLineChart extends ChartWidget
         return 'line';
     }
 
-    protected function getColumnSpan(): int|string|array
+    public function getColumnSpan(): int|string|array
     {
         return 1;
     }

@@ -35,7 +35,7 @@ class AmenityBarChart extends ChartWidget
         return 'bar';
     }
 
-    protected function getColumnSpan(): int|string|array
+    public function getColumnSpan(): int|string|array
     {
         return 1;
     }
