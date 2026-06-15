@@ -23,7 +23,7 @@ class AmenityBarChart extends ChartWidget
                 'credentials' => storage_path('app/analytics/clave-will.json'),
             ]);
 
-            $propertyId = '15074214139';
+            $propertyId = '15074266725';
 
             $response = $client->runReport([
                 'property' => "properties/{$propertyId}",
